@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  frontend:
+    image: agnelo990/fe_swarm:latest # Built from frontend Dockerfile
+      # build:
+      # context: ./relevance-scanner-fe
+    ports:
+      - "80:8080" # Expose port 8080 for frontend
+    deploy:
+      #replicas: 4
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+          #    networks:
+          #      - app_network
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:5000 # URL for backend communication
+
+  backend:
+    image: shahnoor786/resumescannerbackend:latest # Built from backend Dockerfile
+      #build:
+      #context: ./Term-Project-Flask-Container
+    ports:
+      - "5000:5000" # Expose port 5000 for backend
+    deploy:
+      #replicas: 4
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+          #    networks:
+          #      - app_network
+
+
+        #networks:
+        #  app_network:
+    #    driver: overlay
+
